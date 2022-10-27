@@ -1808,6 +1808,11 @@ class LeAudioClientImpl : public LeAudioClient {
       return;
     }
 
+    if (leAudioDevice->encrypted_) {
+      LOG(INFO) << __func__ << " link already encrypted, nothing to do";
+      return;
+    }
+
     changeMtuIfPossible(leAudioDevice);
 
     /* If we know services, register for notifications */
