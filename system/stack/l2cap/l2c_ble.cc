@@ -249,6 +249,8 @@ bool l2cble_conn_comp(uint16_t handle, uint8_t role, const RawAddress& bda,
   /* Save the handle */
   l2cu_set_lcb_handle(*p_lcb, handle);
 
+  p_lcb->link_state = LST_CONNECTING;
+
   /* Connected OK. Change state to connected, we were scanning so we are central
    */
   if (role == HCI_ROLE_CENTRAL) {
