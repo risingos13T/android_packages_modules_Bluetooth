@@ -343,6 +343,11 @@ class Device {
   std::set<uint8_t> active_labels_;
 
   int8_t volume_ = -1;
+
+  /** fix peer register notification later than status changed. @{ */
+  bool play_status_pending_flag = false;
+  /** @} */
+
 };
 
 }  // namespace avrcp

@@ -285,6 +285,13 @@ void Device::HandleNotification(
       media_interface_->GetPlayStatus(
           base::Bind(&Device::PlaybackStatusNotificationResponse,
                      weak_ptr_factory_.GetWeakPtr(), label, true));
+      /** fix peer register notification later than status changed. @{ */
+      if (play_status_pending_flag) {
+        media_interface_->GetPlayStatus(
+          base::Bind(&Device::PlaybackStatusNotificationResponse,
+                     weak_ptr_factory_.GetWeakPtr(), label, false));
+      }
+      /** @} */
     } break;
 
     case Event::PLAYBACK_POS_CHANGED: {
@@ -514,6 +521,17 @@ void Device::PlaybackStatusNotificationResponse(uint8_t label, bool interim,
     return;
   }
 
+  /** fix peer register notification later than status changed. @{ */
+  if (play_status_pending_flag && interim) {
+    state_to_send = last_play_status_.state;
+    DEVICE_VLOG(0) << __func__
+                   << "send last state("
+                   << (int)last_play_status_.state
+                   << ") to "
+                   << address_.ToString();
+  }
+  /** @} */
+
   last_play_status_.state = state_to_send;
 
   auto response =
@@ -522,6 +540,7 @@ void Device::PlaybackStatusNotificationResponse(uint8_t label, bool interim,
   send_message_cb_.Run(label, false, std::move(response));
 
   if (!interim) {
+    play_status_pending_flag = false;
     active_labels_.erase(label);
     play_status_changed_ = Notification(false, 0);
   }
@@ -1399,6 +1418,7 @@ void Device::HandleTrackUpdate() {
 void Device::HandlePlayStatusUpdate() {
   DEVICE_VLOG(2) << __func__;
   if (!play_status_changed_.first) {
+    play_status_pending_flag = true;
     LOG(WARNING) << "Device is not registered for play status updates";
     return;
   }
