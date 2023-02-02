@@ -1169,6 +1169,9 @@ uint16_t AVRC_MsgReq(uint8_t handle, uint8_t label, uint8_t ctype,
   if (p_pkt->event == AVRC_OP_VENDOR) {
     if (is_new_avrcp) {
       p_start = (uint8_t*)(p_pkt + 1) + p_pkt->offset + AVRC_VENDOR_HDR_SIZE;
+      if (cr == AVCT_CMD) {
+        msg_mask |= AVRC_MSG_MASK_IS_VENDOR_CMD;
+      }
     } else {
       /* add AVRCP Vendor Dependent headers */
       p_start = ((uint8_t*)(p_pkt + 1) + p_pkt->offset);
