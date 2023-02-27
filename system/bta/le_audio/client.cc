@@ -3320,6 +3320,7 @@ class LeAudioClientImpl : public LeAudioClient {
     if (!group) {
       LOG(ERROR) << __func__
                  << ", Invalid group: " << static_cast<int>(active_group_id_);
+      le_audio_source_hal_client_->CancelStreamingRequest();
       return;
     }
 
@@ -3476,6 +3477,7 @@ class LeAudioClientImpl : public LeAudioClient {
     if (!group) {
       LOG(ERROR) << __func__
                  << ", Invalid group: " << static_cast<int>(active_group_id_);
+      le_audio_sink_hal_client_->CancelStreamingRequest();
       return;
     }
 
