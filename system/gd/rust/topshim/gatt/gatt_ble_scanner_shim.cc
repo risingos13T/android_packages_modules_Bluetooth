@@ -135,6 +135,7 @@ void BleScannerIntf::OnScanResult(
 void BleScannerIntf::OnTrackAdvFoundLost(AdvertisingTrackInfo ati) {
   rusty::RustRawAddress addr = rusty::CopyToRustAddress(ati.advertiser_address);
   rusty::RustAdvertisingTrackInfo rust_info = {
+      .monitor_handle = ati.monitor_handle,
       .scanner_id = ati.scanner_id,
       .filter_index = ati.filter_index,
       .advertiser_state = ati.advertiser_state,
