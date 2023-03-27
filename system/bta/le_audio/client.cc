@@ -1848,8 +1848,6 @@ class LeAudioClientImpl : public LeAudioClient {
     BtaGattQueue::Clean(leAudioDevice->conn_id_);
     LeAudioDeviceGroup* group = aseGroups_.FindById(leAudioDevice->group_id_);
 
-    groupStateMachine_->ProcessHciNotifAclDisconnected(group, leAudioDevice);
-
     DeregisterNotifications(leAudioDevice);
 
     callbacks_->OnConnectionState(ConnectionState::DISCONNECTED, address);
@@ -1857,6 +1855,8 @@ class LeAudioClientImpl : public LeAudioClient {
     leAudioDevice->mtu_ = 0;
     leAudioDevice->closing_stream_for_disconnection_ = false;
     leAudioDevice->encrypted_ = false;
+
+    groupStateMachine_->ProcessHciNotifAclDisconnected(group, leAudioDevice);
 
     le_audio::MetricsCollector::Get()->OnConnectionStateChanged(
         leAudioDevice->group_id_, address, ConnectionState::DISCONNECTED,
